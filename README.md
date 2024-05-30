@@ -23,7 +23,7 @@ The LRU class is instantiated with an options object. The options object can hav
 
 `max`: The maximum number of entries in the cache. If not specified, the cache size is unlimited.
 `ttl`: The time-to-live (in milliseconds) for each entry. If not specified, entries do not expire.
-`solver`: A function that will be called to compute the value for a key if it's not in the cache.
+`resolver`: A function that will be called to compute the value for a key if it's not in the cache.
 
 ## Methods
 The LRU class provides the following methods:
@@ -38,17 +38,17 @@ The LRU class provides the following methods:
 `set(key, value)`: Sets the value of the entry with the specified key.
 `values()`: Returns an array of all values in the cache.
 
-## Using the Solver Function in LRU Cache
-The solver function is a powerful feature of the LRU Cache module. It allows you to compute the value for a key if it's not already in the cache. This function is called automatically when you try to get a value for a key that doesn't exist in the cache.
+## Using the Resolver Function in LRU Cache
+The resolver function is a powerful feature of the LRU Cache module. It allows you to compute the value for a key if it's not already in the cache. This function is called automatically when you try to get a value for a key that doesn't exist in the cache.
 
-When creating a new instance of the LRU Cache, you can pass a solver function in the options object:
+When creating a new instance of the LRU Cache, you can pass a resolver function in the options object:
 ```JavaScript
 const lru = new LRU({
     max: 2,
-    solver: (key) => {
+    resolver: (key) => {
         // Compute the value for the key
         return computedValue;
     }
 });
 ```
-The solver function receives the key as its argument and should return the computed value for that key.
+The resolver function receives the key as its argument and should return the computed value for that key.

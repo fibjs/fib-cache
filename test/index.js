@@ -180,12 +180,12 @@ describe('LRU', () => {
         assert.deepEqual(lru.entries(), [['a', 1], ['b', 2]]);
     });
 
-    describe("test solver", () => {
+    describe("test resolver", () => {
         it("normal test", () => {
             var resolve_count = 0;
             const lru = new LRU({
                 max: 2,
-                solver: (key) => {
+                resolver: (key) => {
                     resolve_count++;
                     coroutine.sleep(10);
                     return key + resolve_count;
@@ -212,7 +212,7 @@ describe('LRU', () => {
             var resolve_count = 0;
             const lru = new LRU({
                 max: 2,
-                solver: (key) => {
+                resolver: (key) => {
                     resolve_count++;
                     coroutine.sleep(10);
                     return key + resolve_count;
@@ -233,7 +233,7 @@ describe('LRU', () => {
             var resolve_count = 0;
             const lru = new LRU({
                 max: 2,
-                solver: (key) => {
+                resolver: (key) => {
                     resolve_count++;
                     coroutine.sleep(10);
                 }
