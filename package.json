@@ -1,0 +1,11 @@
+{
+    "name": "fib-cache",
+    "version": "1.0.0",
+    "description": "LRU Cache for fibjs",
+    "main": "lib/index.js",
+    "keywords": [
+        "fibjs",
+        "cache",
+        "lru"
+    ]
+}
