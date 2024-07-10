@@ -28,15 +28,15 @@ The LRU class is instantiated with an options object. The options object can hav
 ## Methods
 The LRU class provides the following methods:
 
-`clear()`: Clears the cache.
-`delete(key)`: Deletes the entry with the specified key from the cache.
-`entries()`: Returns an array of all entries in the cache.
-`evict()`: Evicts entries from the cache until it's within its size limit and all remaining entries are within their TTL.
-`get(key)`: Returns the value of the entry with the specified key.
-`has(key)`: Checks if an entry with the specified key exists in the cache.
-`keys()`: Returns an array of all keys in the cache.
-`set(key, value)`: Sets the value of the entry with the specified key.
-`values()`: Returns an array of all values in the cache.
+- `clear()`: Clears the cache.
+- `delete(key)`: Deletes the entry with the specified key from the cache.
+- `entries()`: Returns an array of all entries in the cache.
+- `evict()`: Evicts entries from the cache until it's within its size limit and all remaining entries are within their TTL.
+- `get(key)`: Returns the value of the entry with the specified key.
+- `has(key)`: Checks if an entry with the specified key exists in the cache.
+- `keys()`: Returns an array of all keys in the cache.
+- `set(key, value)`: Sets the value of the entry with the specified key.
+- `values()`: Returns an array of all values in the cache.
 
 ## Using the Resolver Function in LRU Cache
 The resolver function is a powerful feature of the LRU Cache module. It allows you to compute the value for a key if it's not already in the cache. This function is called automatically when you try to get a value for a key that doesn't exist in the cache.
