@@ -1,11 +1,38 @@
 {
     "name": "fib-cache",
-    "version": "1.1.0",
-    "description": "LRU Cache for fibjs",
+    "version": "1.2.0",
+    "description": "A high-performance, thread-safe LRU cache implementation for fibjs with TTL support and resolver functionality",
     "main": "lib/index.js",
+    "scripts": {
+        "test": "fibjs test"
+    },
     "keywords": [
         "fibjs",
         "cache",
-        "lru"
+        "lru",
+        "ttl",
+        "resolver",
+        "thread-safe",
+        "performance"
+    ],
+    "author": {
+        "name": "lion",
+        "email": "lion@9465.net"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/fibjs/fib-cache"
+    },
+    "bugs": {
+        "url": "https://github.com/fibjs/fib-cache/issues"
+    },
+    "engines": {
+        "fibjs": ">=0.35.0"
+    },
+    "files": [
+        "lib",
+        "README.md",
+        "LICENSE"
     ]
 }

@@ -1,54 +1,178 @@
 # LRU Cache for fibjs
-This module provides an implementation of a Least Recently Used (LRU) cache in JavaScript. The LRU cache is a type of cache in which the least recently used entries are removed when the cache's limit has been reached.
 
-## Install
+A high-performance, thread-safe LRU (Least Recently Used) cache implementation for fibjs with TTL support and resolver functionality.
+
+## Features
+
+- **Size-based Eviction**: Automatically removes least recently used items when cache reaches its maximum size
+- **TTL Support**: Time-based expiration for cache entries
+- **Thread Safety**: Safe for concurrent access in multi-fiber environments
+- **Resolver Function**: Automatic value resolution for cache misses
+- **Resource Management**: Efficient memory usage and automatic cleanup
+- **High Performance**: Optimized for both read and write operations
+
+## Installation
+
 ```sh
 fibjs --install fib-cache
 ```
 
-## Usage
-```JavaScript
+## Basic Usage
+
+```javascript
 const { LRU } = require('fib-cache');
 
-const cache = new LRU({ max: 100, ttl: 5000 });
+// Create a cache with max 100 items and 5s TTL
+const cache = new LRU({ 
+    max: 100,
+    ttl: 5000 
+});
 
+// Basic operations
 cache.set('key1', 'value1');
 console.log(cache.get('key1')); // 'value1'
+
+// The item will be automatically removed after 5 seconds
+coroutine.sleep(5000);
+console.log(cache.get('key1')); // undefined
 ```
-## Class: LRU
-The main class exported by this module is `LRU`. An instance of LRU represents a cache with a specified maximum size and time-to-live (TTL) for its entries.
 
-## Constructor
-The LRU class is instantiated with an options object. The options object can have the following properties:
+## Advanced Usage
 
-`max`: The maximum number of entries in the cache. If not specified, the cache size is unlimited.
-`ttl`: The time-to-live (in milliseconds) for each entry. If not specified, entries do not expire.
-`resolver`: A function that will be called to compute the value for a key if it's not in the cache.
+### Using Resolver Function
 
-## Methods
-The LRU class provides the following methods:
-
-- `clear()`: Clears the cache.
-- `delete(key)`: Deletes the entry with the specified key from the cache.
-- `entries()`: Returns an array of all entries in the cache.
-- `evict()`: Evicts entries from the cache until it's within its size limit and all remaining entries are within their TTL.
-- `get(key)`: Returns the value of the entry with the specified key.
-- `has(key)`: Checks if an entry with the specified key exists in the cache.
-- `keys()`: Returns an array of all keys in the cache.
-- `set(key, value)`: Sets the value of the entry with the specified key.
-- `values()`: Returns an array of all values in the cache.
-
-## Using the Resolver Function in LRU Cache
-The resolver function is a powerful feature of the LRU Cache module. It allows you to compute the value for a key if it's not already in the cache. This function is called automatically when you try to get a value for a key that doesn't exist in the cache.
-
-When creating a new instance of the LRU Cache, you can pass a resolver function in the options object:
-```JavaScript
-const lru = new LRU({
-    max: 2,
+```javascript
+const cache = new LRU({
+    max: 1000,
+    ttl: 3600000, // 1 hour
     resolver: (key) => {
-        // Compute the value for the key
-        return computedValue;
+        // Automatically fetch value if not in cache
+        const value = fetchDataFromDatabase(key);
+        return value;
     }
 });
+
+// Will automatically fetch from database if not in cache
+const value = cache.get('user:123');
+
+// Example with sleep
+const slowCache = new LRU({
+    max: 100,
+    resolver: (key) => {
+        // Simulate slow operation
+        coroutine.sleep(100);
+        return `computed_${key}`;
+    }
+});
+
+// This will wait for resolver
+console.log(slowCache.get('test')); // 'computed_test'
 ```
-The resolver function receives the key as its argument and should return the computed value for that key.
+
+### Managing Cache Size
+
+```javascript
+const cache = new LRU({ max: 2 });
+
+cache.set('a', 1);
+cache.set('b', 2);
+cache.set('c', 3); // 'a' will be evicted
+
+console.log(cache.get('a')); // undefined
+console.log(cache.get('b')); // 2
+console.log(cache.get('c')); // 3
+```
+
+## API Reference
+
+### Constructor Options
+
+- `max` (number, optional): Maximum number of items in cache. Default: 0 (no limit)
+- `ttl` (number, optional): Time-to-live in milliseconds. Default: 0 (no expiration)
+- `resolver` (Function, optional): Function to resolve cache misses
+
+### Methods
+
+#### Basic Operations
+
+- `get(key, [resolver])`: Get value by key
+  - `key`: The key to look up
+  - `resolver` (optional): A one-time resolver function for this specific get operation
+- `set(key, value)`: Set value for key
+- `delete(key)`: Remove item by key
+- `has(key)`: Check if key exists
+- `clear()`: Remove all items
+
+#### Cache Information
+
+- `keys()`: Get all keys
+- `values()`: Get all values
+- `entries()`: Get all key-value pairs
+- `size`: Get current cache size
+
+## Thread Safety
+
+The cache is designed to be thread-safe in fibjs environment:
+
+```javascript
+const cache = new LRU({ max: 100 });
+
+// Safe for concurrent access
+coroutine.parallel([
+    () => cache.set('key1', 'value1'),
+    () => cache.get('key1'),
+    () => cache.delete('key1')
+]);
+```
+
+## Performance Considerations
+
+- Cache operations are O(1) for get/set operations
+- Automatic cleanup of expired items during operations
+- Efficient memory usage with proper garbage collection
+- Thread-safe operations with minimal locking
+
+## Using Resolver Function
+
+```javascript
+const cache = new LRU({
+    max: 1000,
+    ttl: 3600000, // 1 hour
+    // Default resolver
+    resolver: (key) => {
+        return fetchFromMainDB(key);
+    }
+});
+
+// Using default resolver
+const value1 = cache.get('user:123');
+
+// Using one-time custom resolver
+const value2 = cache.get('user:456', (key) => {
+    return fetchFromBackupDB(key);
+});
+
+// Example with different resolvers
+const slowCache = new LRU({
+    max: 100,
+    // Default slow resolver
+    resolver: (key) => {
+        coroutine.sleep(100);
+        return `slow_${key}`;
+    }
+});
+
+// Using default slow resolver
+console.log(slowCache.get('test')); // 'slow_test'
+
+// Using fast one-time resolver
+console.log(slowCache.get('test', key => `fast_${key}`)); // 'fast_test'
+```
+
+## License
+
+MIT License
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
